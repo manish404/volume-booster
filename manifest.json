@@ -1,0 +1,46 @@
+{
+    "manifest_version": 3,
+    "name": "Volume Booster+",
+    "version": "1.0.0",
+    "description": "Per-site volume booster with limiter, compressor, and EQ. No shady perms.",
+    "author": "manish404",
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "storage",
+        "tabs"
+    ],
+    "optional_host_permissions": [
+        "<all_urls>"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "index.html"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "limiter-worklet.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ],
+    "commands": {
+        "booster-apply": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+Up"
+            },
+            "description": "Booster+: Apply"
+        },
+        "booster-reset": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+Down"
+            },
+            "description": "Booster+: Reset"
+        }
+    }
+}

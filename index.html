@@ -1,0 +1,198 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Booster+</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="index.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="card">
+        <header class="hdr">
+            <div class="logo" aria-hidden="true"></div>
+            <div class="brand">
+                <b>Volume Booster<span class="brand-accent">+</span></b>
+                <small>Volume • Limiter • EQ</small>
+            </div>
+        </header>
+
+        <!-- PRESET -->
+        <section class="row-inline">
+            <div class="inline">
+                <span class="title">Preset</span>
+                <button class="icon info" data-tip="Pick a starting point. You can still tweak sliders.">
+                    <svg viewBox="0 0 24 24" class="ico">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M12 8h.01M12 11v5" />
+                    </svg>
+                    <span class="tip"></span>
+                </button>
+            </div>
+
+            <!-- hidden value (API consistency) -->
+            <input type="hidden" id="preset" value="fan" />
+
+            <div class="preset-dropdown" id="presetDropdown">
+                <button id="presetBtn" class="preset-btn" aria-haspopup="listbox" aria-expanded="false">
+                    <span id="presetBtnText">Fan-Noise Cut</span><span class="chev">▾</span>
+                </button>
+                <!-- fixed + clamped in JS -->
+                <ul id="presetMenu" class="menu" role="listbox" tabindex="-1">
+                    <li data-val="dialogue"><b>Dialogue Boost</b><small>Presence + gentle comp</small></li>
+                    <li data-val="fan" aria-selected="true"><b>Fan-Noise Cut</b><small>HPF + 100 Hz notch</small></li>
+                    <li data-val="cleanloud"><b>Loud &amp; Clean</b><small>More gain + limiter</small></li>
+                    <li data-val="dialoguemax"><b>Dialogue Max</b><small>Max clarity (watch harshness)</small></li>
+                    <li data-val="latenight"><b>Late Night</b><small>Even, low swing</small></li>
+                    <li data-val="basskeep"><b>Bass Keep</b><small>Keep low end</small></li>
+                    <li data-val="streamboost"><b>Stream Boost</b><small>Loud with limiter</small></li>
+                    <li data-val="none"><b>Custom</b><small>Your slider values</small></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- CONTROLS (3 cols) -->
+        <section class="controls">
+            <div class="tile">
+                <h4 class="tile-h">
+                    <span class="inline"><svg class="ico" viewBox="0 0 24 24">
+                            <path d="M4 10v4h4l6 6V4L8 10H4z" />
+                        </svg>Boost</span>
+                    <button class="icon info" data-tip="Amplifies loudness. Use the Limiter to avoid clipping.">
+                        <svg class="ico" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9" />
+                            <path d="M12 8h.01M12 11v5" />
+                        </svg><span class="tip"></span>
+                    </button>
+                    <span class="muted ml-auto" id="gOut">2.00x</span>
+                </h4>
+                <input id="gain" type="range" min="0.5" max="6" step="0.05" />
+                <div class="bar"><i id="gBar" style="width:33%"></i></div>
+            </div>
+
+            <div class="tile">
+                <h4 class="tile-h">
+                    <span class="inline"><svg class="ico" viewBox="0 0 24 24">
+                            <path d="M6 6h12v4H6zM6 14h8v4H6z" />
+                        </svg>Limiter</span>
+                    <button class="icon info" data-tip="Caps peaks. -1 dB is a safe ceiling.">
+                        <svg class="ico" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9" />
+                            <path d="M12 8h.01M12 11v5" />
+                        </svg><span class="tip"></span>
+                    </button>
+                    <span class="muted ml-auto" id="limOut">-1.0 dB</span>
+                </h4>
+                <input id="limiter" type="range" min="-6" max="0" step="0.5" />
+            </div>
+
+            <div class="tile">
+                <h4 class="tile-h">
+                    <span class="inline"><svg class="ico" viewBox="0 0 24 24">
+                            <path d="M4 12h4l2 6 4-12 2 6h4" />
+                        </svg>Presence (3 kHz)</span>
+                    <button class="icon info" data-tip="Adds clarity to speech. 2-4 dB is usually enough.">
+                        <svg class="ico" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9" />
+                            <path d="M12 8h.01M12 11v5" />
+                        </svg><span class="tip"></span>
+                    </button>
+                    <span class="muted ml-auto" id="preOut">3.0 dB</span>
+                </h4>
+                <input id="presence" type="range" min="0" max="8" step="0.5" />
+            </div>
+
+            <div class="tile">
+                <h4 class="tile-h">
+                    <span class="inline"><svg class="ico" viewBox="0 0 24 24">
+                            <path d="M4 18V6l12 6-12 6z" />
+                        </svg>High-pass</span>
+                    <button class="icon info" data-tip="Cuts low rumble. Try ~120 Hz; go higher if needed.">
+                        <svg class="ico" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9" />
+                            <path d="M12 8h.01M12 11v5" />
+                        </svg><span class="tip"></span>
+                    </button>
+                    <span class="muted ml-auto" id="hpOut">120 Hz</span>
+                </h4>
+                <input id="hpf" type="range" min="20" max="220" step="5" />
+            </div>
+
+            <div class="tile">
+                <h4 class="tile-h">
+                    <span class="inline"><svg class="ico" viewBox="0 0 24 24">
+                            <path d="M12 3v18M3 12h18" />
+                        </svg>Notch (hum)</span>
+                    <button class="icon info" data-tip="Aim at the fan tone. Sweep 90-120 Hz.">
+                        <svg class="ico" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9" />
+                            <path d="M12 8h.01M12 11v5" />
+                        </svg><span class="tip"></span>
+                    </button>
+                    <button id="findHum" class="icon info" data-tip="Auto-detect steady fan tone">
+                        <svg class="ico" viewBox="0 0 24 24">
+                            <path d="M11 5l-7 7 7 7M5 12h14" />
+                        </svg><span class="tip"></span>
+                    </button>
+                    <span class="muted ml-auto" id="noOut">100 Hz</span>
+                </h4>
+                <input id="notchHz" type="range" min="50" max="200" step="5" />
+            </div>
+
+            <div class="tile">
+                <h4 class="tile-h kv">
+                    <span class="inline"><svg class="ico" viewBox="0 0 24 24">
+                            <path d="M4 10h16v4H4z" />
+                        </svg>Compressor</span>
+                    <label><input id="comp" type="checkbox" class="checkbox" /></label>
+                </h4>
+                <div class="muted">Evens out loud/quiet parts.</div>
+            </div>
+        </section>
+
+        <!-- SITE OPTION -->
+        <!-- <section class="tile"> -->
+        <div class="tile" style="margin: 1rem 0;">
+            <div class="kv">
+                <span class="inline"><svg class="ico" viewBox="0 0 24 24">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>Always load for this domain</span>
+                <label><input id="enableSite" type="checkbox" class="checkbox" /></label>
+            </div>
+        </div>
+        <!-- </section> -->
+
+        <!-- WARNING (only if text exists) -->
+        <section id="riskWrap" class="tile dn">
+            <div id="risk" class="badge warn"></div>
+        </section>
+
+        <!-- ACTIONS -->
+        <section class="actions">
+            <span id="status" class="muted"></span>
+            <div class="actions-right">
+                <button id="apply" class="btn">
+                    <svg class="ico" viewBox="0 0 24 24">
+                        <path d="M5 12l4 4L19 6" />
+                    </svg> Apply
+                </button>
+                <button id="reset" class="btn btn-secondary">
+                    <svg class="ico" viewBox="0 0 24 24">
+                        <path d="M3 12a9 9 0 1 0 3-6.7V8M3 4h4" />
+                    </svg> Reset
+                </button>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="foot" style="display: flex; justify-content: space-between;">
+            <a href="https://github.com/manish404" target="_blank" rel="noopener"><b>manish404</b></a>
+            <span id="siteHost" style="text-decoration: underline;">-</span>
+        </footer>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+
+</html>
